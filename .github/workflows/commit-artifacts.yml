@@ -1,0 +1,75 @@
+name: Build and Release Artifacts
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'src/**'
+      - 'plugin/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+      
+      - name: Get version from Cargo.toml
+        id: get_version
+        run: |
+          $version = (Get-Content Cargo.toml | Select-String -Pattern '^version = "(.+)"').Matches.Groups[1].Value
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+        shell: pwsh
+      
+      - name: Get short commit SHA
+        id: get_sha
+        run: echo "sha=$(git rev-parse --short HEAD)" >> $env:GITHUB_OUTPUT
+        shell: bash
+      
+      - name: Build release
+        run: cargo build --release
+      
+      - name: Prepare artifacts
+        run: |
+          mkdir -p release-artifacts
+          $pluginPath = Get-ChildItem -Path "target/release/build/rbx-studio-mcp-*/out/MCPStudioPlugin.rbxm" | Select-Object -First 1
+          Copy-Item $pluginPath.FullName -Destination "release-artifacts/MCPStudioPlugin.rbxm"
+          Copy-Item "target/release/rbx-studio-mcp.exe" -Destination "release-artifacts/rbx-studio-mcp.exe"
+        shell: pwsh
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.get_version.outputs.version }}-${{ steps.get_sha.outputs.sha }}
+          name: Roblox MCP v${{ steps.get_version.outputs.version }} (commit ${{ steps.get_sha.outputs.sha }})
+          body: |
+            ## 🚀 Roblox MCP Release
+            
+            **Version:** ${{ steps.get_version.outputs.version }}
+            **Commit:** ${{ steps.get_sha.outputs.sha }}
+            
+            ### 📦 Archivos incluidos:
+            - `MCPStudioPlugin.rbxm` - Plugin para Roblox Studio
+            - `rbx-studio-mcp.exe` - Ejecutable del servidor MCP
+            
+            ### 📝 Cambios recientes:
+            ${{ github.event.head_commit.message }}
+          files: |
+            release-artifacts/MCPStudioPlugin.rbxm
+            release-artifacts/rbx-studio-mcp.exe
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

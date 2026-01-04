@@ -1,0 +1,28 @@
+# Rust
+/target
+/debug
+Cargo.lock
+
+# Roblox Studio
+*.rbxa
+*.rbxmx
+*.rbxl
+*.rbxlx
+.gpt/
+_old/
+references/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.iml
+
+# System
+.DS_Store
+Thumbs.db
+
+# Project Specific
+.antigravity/
+.gemini/
+assets/
