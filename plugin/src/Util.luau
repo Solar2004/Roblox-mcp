@@ -60,13 +60,21 @@ function Util.convertPropertyValue(instance, propertyName, propertyValue)
 		-- Check if it's a Vector3-like property
 		if #propertyValue == 3 then
 			local prop = propertyName:lower()
-			if prop == "position" or prop == "size" or prop == "orientation" or prop == "velocity" or prop == "angularvelocity" then
+			if
+				prop == "position"
+				or prop == "size"
+				or prop == "orientation"
+				or prop == "velocity"
+				or prop == "angularvelocity"
+			then
 				return Vector3.new(propertyValue[1] or 0, propertyValue[2] or 0, propertyValue[3] or 0)
 			elseif prop == "color" or prop == "color3" then
 				return Color3.new(propertyValue[1] or 0, propertyValue[2] or 0, propertyValue[3] or 0)
 			else
 				-- Try to infer from current property type
-				local success, currentVal = pcall(function() return instance[propertyName] end)
+				local success, currentVal = pcall(function()
+					return instance[propertyName]
+				end)
 				if success then
 					if typeof(currentVal) == "Vector3" then
 						return Vector3.new(propertyValue[1] or 0, propertyValue[2] or 0, propertyValue[3] or 0)
@@ -77,7 +85,9 @@ function Util.convertPropertyValue(instance, propertyName, propertyValue)
 			end
 		elseif #propertyValue == 2 then
 			-- Possibly Vector2
-			local success, currentVal = pcall(function() return instance[propertyName] end)
+			local success, currentVal = pcall(function()
+				return instance[propertyName]
+			end)
 			if success and typeof(currentVal) == "Vector2" then
 				return Vector2.new(propertyValue[1] or 0, propertyValue[2] or 0)
 			end
@@ -96,7 +106,9 @@ function Util.convertPropertyValue(instance, propertyName, propertyValue)
 
 	-- Handle Enum values (strings like "Ball", "Cylinder", etc.)
 	if type(propertyValue) == "string" then
-		local success, currentVal = pcall(function() return instance[propertyName] end)
+		local success, currentVal = pcall(function()
+			return instance[propertyName]
+		end)
 		if success and typeof(currentVal) == "EnumItem" then
 			local enumType = tostring(currentVal.EnumType)
 			local enumSuccess, enumVal = pcall(function()
@@ -114,8 +126,12 @@ function Util.convertPropertyValue(instance, propertyName, propertyValue)
 
 	-- Handle boolean strings
 	if type(propertyValue) == "string" then
-		if propertyValue == "true" then return true end
-		if propertyValue == "false" then return false end
+		if propertyValue == "true" then
+			return true
+		end
+		if propertyValue == "false" then
+			return false
+		end
 	end
 
 	-- Return as-is for primitives (number, boolean, string)
@@ -152,9 +168,9 @@ end
 
 function Util.evaluateFormula(formula, variables, instance, index)
 	local value = formula
-	
+
 	value = value:gsub("index", tostring(index))
-	
+
 	if instance and instance:IsA("BasePart") then
 		local pos = instance.Position
 		local size = instance.Size
@@ -166,46 +182,58 @@ function Util.evaluateFormula(formula, variables, instance, index)
 		value = value:gsub("Size%.Z", tostring(size.Z))
 		value = value:gsub("magnitude", tostring(pos.magnitude))
 	end
-	
+
 	if variables then
 		for k, v in pairs(variables) do
 			value = value:gsub(k, tostring(v))
 		end
 	end
-	
-	value = value:gsub("sin%(([%d%.%-]+)%)", function(x) return tostring(math.sin(tonumber(x) or 0)) end)
-	value = value:gsub("cos%(([%d%.%-]+)%)", function(x) return tostring(math.cos(tonumber(x) or 0)) end)
-	value = value:gsub("sqrt%(([%d%.%-]+)%)", function(x) return tostring(math.sqrt(tonumber(x) or 0)) end)
-	value = value:gsub("abs%(([%d%.%-]+)%)", function(x) return tostring(math.abs(tonumber(x) or 0)) end)
-	value = value:gsub("floor%(([%d%.%-]+)%)", function(x) return tostring(math.floor(tonumber(x) or 0)) end)
-	value = value:gsub("ceil%(([%d%.%-]+)%)", function(x) return tostring(math.ceil(tonumber(x) or 0)) end)
-	
+
+	value = value:gsub("sin%(([%d%.%-]+)%)", function(x)
+		return tostring(math.sin(tonumber(x) or 0))
+	end)
+	value = value:gsub("cos%(([%d%.%-]+)%)", function(x)
+		return tostring(math.cos(tonumber(x) or 0))
+	end)
+	value = value:gsub("sqrt%(([%d%.%-]+)%)", function(x)
+		return tostring(math.sqrt(tonumber(x) or 0))
+	end)
+	value = value:gsub("abs%(([%d%.%-]+)%)", function(x)
+		return tostring(math.abs(tonumber(x) or 0))
+	end)
+	value = value:gsub("floor%(([%d%.%-]+)%)", function(x)
+		return tostring(math.floor(tonumber(x) or 0))
+	end)
+	value = value:gsub("ceil%(([%d%.%-]+)%)", function(x)
+		return tostring(math.ceil(tonumber(x) or 0))
+	end)
+
 	local result = tonumber(value)
 	if result then
 		return result, nil
 	end
-	
+
 	local success, evalResult = pcall(function()
 		local num = tonumber(value)
 		if num then
 			return num
 		end
-		
+
 		local a, b = value:match("^([%d%.%-]+)%s*%*%s*([%d%.%-]+)$")
 		if a and b then
 			return (tonumber(a) or 0) * (tonumber(b) or 0)
 		end
-		
+
 		a, b = value:match("^([%d%.%-]+)%s*%+%s*([%d%.%-]+)$")
 		if a and b then
 			return (tonumber(a) or 0) + (tonumber(b) or 0)
 		end
-		
+
 		a, b = value:match("^([%d%.%-]+)%s*%-%s*([%d%.%-]+)$")
 		if a and b then
 			return (tonumber(a) or 0) - (tonumber(b) or 0)
 		end
-		
+
 		a, b = value:match("^([%d%.%-]+)%s*/%s*([%d%.%-]+)$")
 		if a and b then
 			local divisor = tonumber(b) or 1
@@ -213,10 +241,10 @@ function Util.evaluateFormula(formula, variables, instance, index)
 				return (tonumber(a) or 0) / divisor
 			end
 		end
-		
+
 		error("Unsupported formula pattern: " .. value)
 	end)
-	
+
 	if success and type(evalResult) == "number" then
 		return evalResult, nil
 	else

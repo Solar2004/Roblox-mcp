@@ -93,7 +93,9 @@ impl ServerHandler for RBXStudioServer {
 
 #[derive(Debug, Deserialize, Serialize, schemars::JsonSchema, Clone)]
 struct RunCommand {
-    #[schemars(description = "Luau code/command to execute in Studio (e.g. `workspace.Part.Color = Color3.new(1,0,0)`)")]
+    #[schemars(
+        description = "Luau code/command to execute in Studio (e.g. `workspace.Part.Color = Color3.new(1,0,0)`)"
+    )]
     command: String,
 }
 #[derive(Debug, Deserialize, Serialize, schemars::JsonSchema, Clone)]
@@ -123,7 +125,9 @@ struct DownloadAsset {
 
 #[derive(Debug, Deserialize, Serialize, schemars::JsonSchema, Clone)]
 struct GetInstanceProperties {
-    #[schemars(description = "Roblox instance path using dot notation (e.g., \"game.Workspace.Part\")")]
+    #[schemars(
+        description = "Roblox instance path using dot notation (e.g., \"game.Workspace.Part\")"
+    )]
     instance_path: String,
 }
 
@@ -143,7 +147,9 @@ struct SearchWebScripts {
     query: String,
     #[schemars(description = "Search depth (basic or advanced). Default: basic")]
     depth: Option<String>,
-    #[schemars(description = "Use Research Agent for deep analysis (slower but better). Default: false")]
+    #[schemars(
+        description = "Use Research Agent for deep analysis (slower but better). Default: false"
+    )]
     use_research: Option<bool>,
 }
 
@@ -161,7 +167,9 @@ struct FetchUrlContent {
 
 #[derive(Debug, Deserialize, Serialize, schemars::JsonSchema, Clone)]
 struct InstallSystem {
-    #[schemars(description = "Name of the system to install (e.g. 'Quest System', 'Fireball Skill')")]
+    #[schemars(
+        description = "Name of the system to install (e.g. 'Quest System', 'Fireball Skill')"
+    )]
     system_name: String,
 }
 
@@ -175,7 +183,9 @@ struct SmartUnpack {
 struct SearchCreatorStore {
     #[schemars(description = "Search query for assets")]
     query: String,
-    #[schemars(description = "Asset type: Audio, Model, Decal, Plugin, MeshPart, Video, FontFamily. Default: Model")]
+    #[schemars(
+        description = "Asset type: Audio, Model, Decal, Plugin, MeshPart, Video, FontFamily. Default: Model"
+    )]
     asset_type: Option<String>,
     #[schemars(description = "Maximum number of results. Default: 10, Max: 100")]
     limit: Option<u32>,
@@ -195,7 +205,9 @@ struct CreateScript {
     name: String,
     #[schemars(description = "Parent instance path")]
     parent: String,
-    #[schemars(description = "Type of script: 'Script', 'LocalScript', or 'ModuleScript'. Default: Script")]
+    #[schemars(
+        description = "Type of script: 'Script', 'LocalScript', or 'ModuleScript'. Default: Script"
+    )]
     script_type: Option<String>,
     #[schemars(description = "Initial source code")]
     source: Option<String>,
@@ -217,7 +229,9 @@ struct ReadScript {
 
 #[derive(Debug, Deserialize, Serialize, schemars::JsonSchema, Clone)]
 struct GetFileTree {
-    #[schemars(description = "Roblox instance path to start from using dot notation. Defaults to game root if empty.")]
+    #[schemars(
+        description = "Roblox instance path to start from using dot notation. Defaults to game root if empty."
+    )]
     path: Option<String>,
 }
 
@@ -392,9 +406,7 @@ impl RBXStudioServer {
             .await
     }
 
-    #[tool(
-        description = "Get all properties of a specific Roblox instance in Studio"
-    )]
+    #[tool(description = "Get all properties of a specific Roblox instance in Studio")]
     async fn get_instance_properties(
         &self,
         Parameters(args): Parameters<GetInstanceProperties>,
@@ -403,9 +415,7 @@ impl RBXStudioServer {
             .await
     }
 
-    #[tool(
-        description = "Set a property on any Roblox instance"
-    )]
+    #[tool(description = "Set a property on any Roblox instance")]
     async fn set_property(
         &self,
         Parameters(args): Parameters<SetProperty>,
@@ -414,9 +424,7 @@ impl RBXStudioServer {
             .await
     }
 
-    #[tool(
-        description = "Get the Roblox instance hierarchy tree from Roblox Studio."
-    )]
+    #[tool(description = "Get the Roblox instance hierarchy tree from Roblox Studio.")]
     async fn get_file_tree(
         &self,
         Parameters(args): Parameters<GetFileTree>,
@@ -425,9 +433,7 @@ impl RBXStudioServer {
             .await
     }
 
-    #[tool(
-        description = "Get available Roblox services and their children"
-    )]
+    #[tool(description = "Get available Roblox services and their children")]
     async fn get_services(
         &self,
         Parameters(args): Parameters<GetServices>,
@@ -447,9 +453,7 @@ impl RBXStudioServer {
             .await
     }
 
-    #[tool(
-        description = "Get child instances and their class types from a Roblox parent instance"
-    )]
+    #[tool(description = "Get child instances and their class types from a Roblox parent instance")]
     async fn get_instance_children(
         &self,
         Parameters(args): Parameters<GetInstanceChildren>,
@@ -458,9 +462,7 @@ impl RBXStudioServer {
             .await
     }
 
-    #[tool(
-        description = "Search for Roblox instances by name, class type, or script content"
-    )]
+    #[tool(description = "Search for Roblox instances by name, class type, or script content")]
     async fn search_files(
         &self,
         Parameters(args): Parameters<SearchFiles>,
@@ -469,9 +471,7 @@ impl RBXStudioServer {
             .await
     }
 
-    #[tool(
-        description = "Find instances by name, class, or properties"
-    )]
+    #[tool(description = "Find instances by name, class, or properties")]
     async fn search_objects(
         &self,
         Parameters(args): Parameters<SearchObjects>,
@@ -480,9 +480,7 @@ impl RBXStudioServer {
             .await
     }
 
-    #[tool(
-        description = "Find objects with specific property values"
-    )]
+    #[tool(description = "Find objects with specific property values")]
     async fn search_by_property(
         &self,
         Parameters(args): Parameters<SearchByProperty>,
@@ -574,25 +572,31 @@ impl RBXStudioServer {
         // Category 11 = Models
         let category = match args.asset_type.as_deref() {
             Some("Audio") => 9, // Example category IDs needed, using Models (11) as default for now or finding documented ones
-            _ => 11, // Models
+            _ => 11,            // Models
         };
-        
+
         let client = reqwest::Client::new();
         // Using catalog API. Note: Many useful endpoints require auth.
         // Trying generic search items details
-        let url = format!("https://catalog.roblox.com/v1/search/items/details?Keyword={}&Category={}&Limit={}", query, category, limit);
-        
+        let url = format!(
+            "https://catalog.roblox.com/v1/search/items/details?Keyword={}&Category={}&Limit={}",
+            query, category, limit
+        );
+
         // This likely needs a robust implementation or proxy for stability, but we try direct first.
         let res = client.get(&url).send().await;
-        
+
         match res {
             Ok(response) => {
                 let text = response.text().await.unwrap_or_default();
                 // Return raw JSON for now, or parse it?
                 // Raw JSON is better for the LLM to inspect.
                 Ok(CallToolResult::success(vec![Content::text(text)]))
-            },
-            Err(e) => Ok(CallToolResult::error(vec![Content::text(format!("Request failed: {}", e))]))
+            }
+            Err(e) => Ok(CallToolResult::error(vec![Content::text(format!(
+                "Request failed: {}",
+                e
+            ))])),
         }
     }
 
@@ -604,43 +608,59 @@ impl RBXStudioServer {
         let asset_id = args.asset_id;
         let file_name = args.file_name.unwrap_or_else(|| asset_id.to_string());
         let path = format!("assets/{}.rbxm", file_name);
-        
+
         // Ensure assets dir exists
-        let _ =  tokio::fs::create_dir_all("assets").await;
+        let _ = tokio::fs::create_dir_all("assets").await;
 
         let client = reqwest::Client::new();
         let url = format!("https://assetdelivery.roblox.com/v1/asset?id={}", asset_id);
-        
+
         let res = client.get(&url).send().await;
 
         match res {
             Ok(response) => {
                 if response.status().is_success() {
-                    let bytes = response.bytes().await.map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
-                    tokio::fs::write(&path, bytes).await.map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
-                    Ok(CallToolResult::success(vec![Content::text(format!("Saved asset {} to {}", asset_id, path))]))
+                    let bytes = response
+                        .bytes()
+                        .await
+                        .map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
+                    tokio::fs::write(&path, bytes)
+                        .await
+                        .map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
+                    Ok(CallToolResult::success(vec![Content::text(format!(
+                        "Saved asset {} to {}",
+                        asset_id, path
+                    ))]))
                 } else {
-                     Ok(CallToolResult::error(vec![Content::text(format!("Failed to download: Status {}", response.status()))]))
+                    Ok(CallToolResult::error(vec![Content::text(format!(
+                        "Failed to download: Status {}",
+                        response.status()
+                    ))]))
                 }
-            },
-            Err(e) => Ok(CallToolResult::error(vec![Content::text(format!("Request failed: {}", e))]))
+            }
+            Err(e) => Ok(CallToolResult::error(vec![Content::text(format!(
+                "Request failed: {}",
+                e
+            ))])),
         }
     }
 
-    #[tool(description = "Search the web using Tavily AI. Use 'basic' depth for quick results or 'advanced' for more comprehensive searches.")]
+    #[tool(
+        description = "Search the web using Tavily AI. Use 'basic' depth for quick results or 'advanced' for more comprehensive searches."
+    )]
     async fn search_web_scripts(
         &self,
         Parameters(args): Parameters<SearchWebScripts>,
     ) -> Result<CallToolResult, ErrorData> {
         let api_key = std::env::var("TAVILY_API_KEY")
             .unwrap_or_else(|_| "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".to_string());
-        
+
         // If still using placeholder/hardcoded, warn or proceed.
-        // We kept the user's provided key as default for convenience, 
+        // We kept the user's provided key as default for convenience,
         // but now they can override it in JSON.
-        
+
         let client = reqwest::Client::new();
-        
+
         // Use Tavily Search API with configurable depth
         // Research mode is disabled as it requires additional undocumented parameters
         let search_url = "https://api.tavily.com/search";
@@ -651,15 +671,21 @@ impl RBXStudioServer {
             "include_raw_content": true,
             "max_results": 5
         });
-        
-        let res = client.post(search_url)
+
+        let res = client
+            .post(search_url)
             .bearer_auth(&api_key)
             .json(&body)
             .send()
             .await
-            .map_err(|e| ErrorData::internal_error(format!("Search request failed: {}", e), None))?;
+            .map_err(|e| {
+                ErrorData::internal_error(format!("Search request failed: {}", e), None)
+            })?;
 
-        let text = res.text().await.map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
+        let text = res
+            .text()
+            .await
+            .map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
         Ok(CallToolResult::success(vec![Content::text(text)]))
     }
 
@@ -670,22 +696,28 @@ impl RBXStudioServer {
     ) -> Result<CallToolResult, ErrorData> {
         let api_key = std::env::var("TAVILY_API_KEY")
             .unwrap_or_else(|_| "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".to_string());
-        
+
         let client = reqwest::Client::new();
-        
+
         let url = "https://api.tavily.com/extract";
         let body = serde_json::json!({
             "urls": args.urls,
         });
 
-        let res = client.post(url)
+        let res = client
+            .post(url)
             .bearer_auth(&api_key)
             .json(&body)
             .send()
             .await
-            .map_err(|e| ErrorData::internal_error(format!("Extract request failed: {}", e), None))?;
+            .map_err(|e| {
+                ErrorData::internal_error(format!("Extract request failed: {}", e), None)
+            })?;
 
-        let text = res.text().await.map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
+        let text = res
+            .text()
+            .await
+            .map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
         Ok(CallToolResult::success(vec![Content::text(text)]))
     }
 
@@ -694,12 +726,19 @@ impl RBXStudioServer {
         &self,
         Parameters(args): Parameters<FetchUrlContent>,
     ) -> Result<CallToolResult, ErrorData> {
-        let res = reqwest::get(&args.url).await.map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
-        let text = res.text().await.map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
+        let res = reqwest::get(&args.url)
+            .await
+            .map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
+        let text = res
+            .text()
+            .await
+            .map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
         Ok(CallToolResult::success(vec![Content::text(text)]))
     }
 
-    #[tool(description = "Automated System Installer: Searches Marketplace for best match and installs it.")]
+    #[tool(
+        description = "Automated System Installer: Searches Marketplace for best match and installs it."
+    )]
     async fn install_system(
         &self,
         Parameters(args): Parameters<InstallSystem>,
@@ -707,36 +746,67 @@ impl RBXStudioServer {
         // 1. Search Marketplace
         let query = args.system_name.clone();
         let category = 11; // Models
-        let url = format!("https://catalog.roblox.com/v1/search/items/details?Keyword={}&Category={}&Limit=1", query, category);
-         let client = reqwest::Client::new();
-        let search_res = client.get(&url).send().await
-              .map_err(|e| ErrorData::internal_error(format!("Search failed: {}", e), None))?;
-        
-        let search_json: serde_json::Value = search_res.json().await
-             .map_err(|e| ErrorData::internal_error(format!("Failed to parse search JSON: {}", e), None))?;
+        let url = format!(
+            "https://catalog.roblox.com/v1/search/items/details?Keyword={}&Category={}&Limit=1",
+            query, category
+        );
+        let client = reqwest::Client::new();
+        let search_res = client
+            .get(&url)
+            .send()
+            .await
+            .map_err(|e| ErrorData::internal_error(format!("Search failed: {}", e), None))?;
+
+        let search_json: serde_json::Value = search_res.json().await.map_err(|e| {
+            ErrorData::internal_error(format!("Failed to parse search JSON: {}", e), None)
+        })?;
 
         // Extract first asset ID
-        let data = search_json.get("data").and_then(|v| v.as_array()).ok_or(ErrorData::internal_error("Invalid search response format", None))?;
-        
+        let data =
+            search_json
+                .get("data")
+                .and_then(|v| v.as_array())
+                .ok_or(ErrorData::internal_error(
+                    "Invalid search response format",
+                    None,
+                ))?;
+
         if let Some(first_item) = data.first() {
-            let asset_id = first_item.get("id").and_then(|v| v.as_u64()).ok_or(ErrorData::internal_error("Item has no ID", None))?;
-            let name = first_item.get("name").and_then(|v| v.as_str()).unwrap_or("Unknown");
+            let asset_id = first_item
+                .get("id")
+                .and_then(|v| v.as_u64())
+                .ok_or(ErrorData::internal_error("Item has no ID", None))?;
+            let name = first_item
+                .get("name")
+                .and_then(|v| v.as_str())
+                .unwrap_or("Unknown");
 
             // 2. Download Asset
             let file_name = format!("{}_{}", name.replace(" ", "_"), asset_id);
             let path = format!("assets/{}.rbxm", file_name);
-            let _ =  tokio::fs::create_dir_all("assets").await;
+            let _ = tokio::fs::create_dir_all("assets").await;
 
             let download_url = format!("https://assetdelivery.roblox.com/v1/asset?id={}", asset_id);
-            let download_res = client.get(&download_url).send().await
-                 .map_err(|e| ErrorData::internal_error(format!("Download failed: {}", e), None))?;
-            
-             if !download_res.status().is_success() {
-                 return Ok(CallToolResult::error(vec![Content::text(format!("Failed to download asset {}: Status {}", asset_id, download_res.status()))]));
-             }
-             
-            let bytes = download_res.bytes().await.map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
-            tokio::fs::write(&path, bytes).await.map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
+            let download_res =
+                client.get(&download_url).send().await.map_err(|e| {
+                    ErrorData::internal_error(format!("Download failed: {}", e), None)
+                })?;
+
+            if !download_res.status().is_success() {
+                return Ok(CallToolResult::error(vec![Content::text(format!(
+                    "Failed to download asset {}: Status {}",
+                    asset_id,
+                    download_res.status()
+                ))]));
+            }
+
+            let bytes = download_res
+                .bytes()
+                .await
+                .map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
+            tokio::fs::write(&path, bytes)
+                .await
+                .map_err(|e| ErrorData::internal_error(e.to_string(), None))?;
 
             // 3. Insert into Studio
             // Convert struct to ToolArguments like generic_tool_run does, but we are inside the server.
@@ -745,18 +815,23 @@ impl RBXStudioServer {
                 query: None,
                 asset_id: Some(asset_id),
             };
-            
+
             let tool_val = ToolArgumentValues::InsertModel(insert_args);
             let insert_result_raw = self.generic_tool_run(tool_val).await?;
             // insert_result is CallToolResult. We need the text content.
             // generic_tool_run returns CallToolResult.
             // The content[0].text is the model name.
-            let model_name = insert_result_raw.content.first()
+            let model_name = insert_result_raw
+                .content
+                .first()
                 .and_then(|c| match &c.raw {
                     rmcp::model::RawContent::Text(t) => Some(t.text.clone()),
                     _ => None,
                 })
-                .ok_or(ErrorData::internal_error("Failed to get model name from insert result", None))?;
+                .ok_or(ErrorData::internal_error(
+                    "Failed to get model name from insert result",
+                    None,
+                ))?;
 
             // 4. Smart Unpack
             let unpack_args = SmartUnpack {
@@ -766,16 +841,19 @@ impl RBXStudioServer {
             let unpack_result = self.generic_tool_run(unpack_val).await?;
 
             // Return combined result
-             Ok(CallToolResult::success(vec![Content::text(format!(
+            Ok(CallToolResult::success(vec![Content::text(format!(
                  "Successfully installed System '{}' (Asset ID: {}).\nFile saved to: {}\nStudio Response: {}\nUnpack Response: {:?}", 
                  name, asset_id, path, model_name, unpack_result
              ))]))
-
         } else {
-             Ok(CallToolResult::error(vec![Content::text(format!("No results found for system: {}", query))]))
+            Ok(CallToolResult::error(vec![Content::text(format!(
+                "No results found for system: {}",
+                query
+            ))]))
         }
     }
 
+    #[allow(dead_code)]
     async fn smart_unpack(
         &self,
         Parameters(args): Parameters<SmartUnpack>,
@@ -784,7 +862,9 @@ impl RBXStudioServer {
             .await
     }
 
-    #[tool(description = "Create a new Script, LocalScript, or ModuleScript with optional source code")]
+    #[tool(
+        description = "Create a new Script, LocalScript, or ModuleScript with optional source code"
+    )]
     async fn create_script(
         &self,
         Parameters(args): Parameters<CreateScript>,
@@ -811,20 +891,27 @@ impl RBXStudioServer {
             .await
     }
 
-    #[tool(description = "Search Roblox Creator Store/Toolbox for assets (models, scripts, audio, etc.) and optionally download them")]
+    #[tool(
+        description = "Search Roblox Creator Store/Toolbox for assets (models, scripts, audio, etc.) and optionally download them"
+    )]
     async fn search_creator_store(
         &self,
         Parameters(args): Parameters<SearchCreatorStore>,
     ) -> Result<CallToolResult, ErrorData> {
         // Log the parameters for debugging
         let download_enabled = args.download.unwrap_or(false);
-        tracing::info!("search_creator_store called with query='{}', asset_type={:?}, limit={:?}, download={}", 
-            args.query, args.asset_type, args.limit, download_enabled);
-        
+        tracing::info!(
+            "search_creator_store called with query='{}', asset_type={:?}, limit={:?}, download={}",
+            args.query,
+            args.asset_type,
+            args.limit,
+            download_enabled
+        );
+
         // Map asset type to searchCategoryType
         let asset_type = args.asset_type.unwrap_or("Model".to_string());
         let limit = args.limit.unwrap_or(10).min(100);
-        
+
         // Build the search URL
         let url = format!(
             "https://apis.roblox.com/toolbox-service/v2/assets:search?searchCategoryType={}&query={}&maxPageSize={}",
@@ -832,44 +919,52 @@ impl RBXStudioServer {
             urlencoding::encode(&args.query),
             limit
         );
-        
+
         // Retry logic with exponential backoff
         let max_retries = 3;
         let mut search_json: Option<serde_json::Value> = None;
         let mut last_error = String::new();
-        
+
         for attempt in 0..max_retries {
             if attempt > 0 {
                 let backoff_ms = 1000 * (2_u64.pow(attempt as u32));
                 tracing::warn!("Retry attempt {} after {}ms delay", attempt + 1, backoff_ms);
                 tokio::time::sleep(tokio::time::Duration::from_millis(backoff_ms)).await;
             }
-            
+
             // Make the request with timeout
             let client = reqwest::Client::builder()
                 .timeout(std::time::Duration::from_secs(30))
                 .build()
-                .map_err(|e| ErrorData::internal_error(format!("Failed to build client: {}", e), None))?;
-            
+                .map_err(|e| {
+                    ErrorData::internal_error(format!("Failed to build client: {}", e), None)
+                })?;
+
             let res = client.get(&url).send().await;
-            
+
             match res {
                 Ok(response) => {
                     let status = response.status();
-                    
+
                     if status.is_success() {
                         match response.json().await {
                             Ok(json) => {
                                 search_json = Some(json);
                                 break;
-                            },
+                            }
                             Err(e) => {
                                 last_error = format!("Failed to parse response: {}", e);
-                                tracing::error!("Parse error on attempt {}: {}", attempt + 1, last_error);
+                                tracing::error!(
+                                    "Parse error on attempt {}: {}",
+                                    attempt + 1,
+                                    last_error
+                                );
                                 continue;
                             }
                         }
-                    } else if status == reqwest::StatusCode::GATEWAY_TIMEOUT || status == reqwest::StatusCode::REQUEST_TIMEOUT {
+                    } else if status == reqwest::StatusCode::GATEWAY_TIMEOUT
+                        || status == reqwest::StatusCode::REQUEST_TIMEOUT
+                    {
                         last_error = format!("Request timeout ({})", status);
                         tracing::warn!("Timeout on attempt {}: {}", attempt + 1, last_error);
                         continue;
@@ -880,14 +975,17 @@ impl RBXStudioServer {
                         continue;
                     } else {
                         let error_text = response.text().await.unwrap_or_default();
-                        last_error = format!("Search failed with status {}: {}", status, error_text);
+                        last_error =
+                            format!("Search failed with status {}: {}", status, error_text);
                         tracing::error!("Error on attempt {}: {}", attempt + 1, last_error);
-                        if status.is_client_error() && status != reqwest::StatusCode::TOO_MANY_REQUESTS {
+                        if status.is_client_error()
+                            && status != reqwest::StatusCode::TOO_MANY_REQUESTS
+                        {
                             break;
                         }
                         continue;
                     }
-                },
+                }
                 Err(e) => {
                     last_error = format!("Search request failed: {}", e);
                     tracing::error!("Network error on attempt {}: {}", attempt + 1, last_error);
@@ -895,7 +993,7 @@ impl RBXStudioServer {
                 }
             }
         }
-        
+
         let search_json = match search_json {
             Some(json) => json,
             None => {
@@ -905,57 +1003,83 @@ impl RBXStudioServer {
                 ))]));
             }
         };
-        
+
         // Extract results
-        let assets = search_json.get("creatorStoreAssets")
+        let assets = search_json
+            .get("creatorStoreAssets")
             .and_then(|v| v.as_array())
             .ok_or(ErrorData::internal_error("Invalid response format", None))?;
-        
+
         if assets.is_empty() {
             return Ok(CallToolResult::success(vec![Content::text(format!(
                 "No {} assets found for query: '{}'",
                 asset_type, args.query
             ))]));
         }
-        
+
         let mut result_text = format!("Found {} {} assets:\n\n", assets.len(), asset_type);
         let mut asset_ids = Vec::new();
-        
+
         for (idx, asset) in assets.iter().enumerate() {
             let asset_obj = asset.get("asset");
-            let id = asset_obj.and_then(|a| a.get("id")).and_then(|v| v.as_u64()).unwrap_or(0);
-            let name = asset_obj.and_then(|a| a.get("name")).and_then(|v| v.as_str()).unwrap_or("Unknown");
-            let description = asset_obj.and_then(|a| a.get("description")).and_then(|v| v.as_str()).unwrap_or("");
-            let creator = asset.get("creator").and_then(|c| c.get("name")).and_then(|v| v.as_str()).unwrap_or("Unknown");
-            
+            let id = asset_obj
+                .and_then(|a| a.get("id"))
+                .and_then(|v| v.as_u64())
+                .unwrap_or(0);
+            let name = asset_obj
+                .and_then(|a| a.get("name"))
+                .and_then(|v| v.as_str())
+                .unwrap_or("Unknown");
+            let description = asset_obj
+                .and_then(|a| a.get("description"))
+                .and_then(|v| v.as_str())
+                .unwrap_or("");
+            let creator = asset
+                .get("creator")
+                .and_then(|c| c.get("name"))
+                .and_then(|v| v.as_str())
+                .unwrap_or("Unknown");
+
             result_text.push_str(&format!(
                 "{}. {} (ID: {})\n   Creator: {}\n   Description: {}\n\n",
-                idx + 1, name, id, creator,
-                if description.len() > 100 { &description[..100] } else { description }
+                idx + 1,
+                name,
+                id,
+                creator,
+                if description.len() > 100 {
+                    &description[..100]
+                } else {
+                    description
+                }
             ));
-            
+
             // Collect asset IDs for insertion
             if download_enabled && id > 0 {
                 asset_ids.push(id);
             }
         }
-        
+
         // If download is enabled, insert assets into Roblox Studio via plugin
         if download_enabled && !asset_ids.is_empty() {
-            result_text.push_str(&format!("\n🎮 Inserting {} assets into Roblox Studio...\n", asset_ids.len()));
-            
+            result_text.push_str(&format!(
+                "\n🎮 Inserting {} assets into Roblox Studio...\n",
+                asset_ids.len()
+            ));
+
             // Create InsertAssets command for the plugin
-            let insert_args = serde_json::json!({
+            let _insert_args = serde_json::json!({
                 "InsertAssets": {
                     "asset_ids": asset_ids
                 }
             });
-            
+
             // Send to plugin via generic_tool_run
-            let insert_result = self.generic_tool_run(ToolArgumentValues::InsertAssets(InsertAssetsArgs {
-                asset_ids: asset_ids.clone(),
-            })).await;
-            
+            let insert_result = self
+                .generic_tool_run(ToolArgumentValues::InsertAssets(InsertAssetsArgs {
+                    asset_ids: asset_ids.clone(),
+                }))
+                .await;
+
             match insert_result {
                 Ok(tool_result) => {
                     // Extract text from the result
@@ -964,16 +1088,17 @@ impl RBXStudioServer {
                             result_text.push_str(&format!("\n{}\n", text_content.text));
                         }
                     }
-                },
+                }
                 Err(e) => {
                     result_text.push_str(&format!("\n⚠ Failed to insert assets: {}\n", e));
                 }
             }
         } else if !download_enabled {
             result_text.push_str("\n💡 Tip: To insert these assets into Roblox Studio, add 'download: true' to the parameters.\n");
-            result_text.push_str("   Example: search_creator_store(query=\"sword\", download=true)\n");
+            result_text
+                .push_str("   Example: search_creator_store(query=\"sword\", download=true)\n");
         }
-        
+
         Ok(CallToolResult::success(vec![Content::text(result_text)]))
     }
 

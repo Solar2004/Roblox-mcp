@@ -67,45 +67,45 @@ export type DeleteObjectArgs = {
 }
 
 export type MassSetPropertyArgs = {
-	paths: {string},
+	paths: { string },
 	propertyName: string,
 	propertyValue: any,
 }
 
 export type MassGetPropertyArgs = {
-	paths: {string},
+	paths: { string },
 	propertyName: string,
 }
 
 export type SetCalculatedPropertyArgs = {
-	paths: {string},
+	paths: { string },
 	propertyName: string,
 	formula: string,
-	variables: {[string]: number}?,
+	variables: { [string]: number }?,
 }
 
 export type SetRelativePropertyArgs = {
-	paths: {string},
+	paths: { string },
 	propertyName: string,
 	operation: string,
 	value: any,
 	component: string?,
 }
 
-export type GetPlaceInfoArgs = {
-}
+export type GetPlaceInfoArgs = {}
 
 export type GetClassInfoArgs = {
 	className: string,
 }
 
 export type InsertAssetsArgs = {
-	asset_ids: {number},
+	asset_ids: { number },
 }
 
-export type ToolArgs = { InsertModel: InsertModelArgs } 
-	| { RunCommand: RunCommandArgs } 
-	| { GetInstanceProperties: GetInstancePropertiesArgs } 
+export type ToolArgs =
+	{ InsertModel: InsertModelArgs }
+	| { RunCommand: RunCommandArgs }
+	| { GetInstanceProperties: GetInstancePropertiesArgs }
 	| { SetProperty: SetPropertyArgs }
 	| { GetFileTree: GetFileTreeArgs }
 	| { GetServices: GetServicesArgs }

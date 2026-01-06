@@ -128,13 +128,13 @@ local function handleInsertModel(args: Types.ToolArgs): string?
 	end
 
 	local insertModelArgs: Types.InsertModelArgs = args["InsertModel"]
-	
+
 	if insertModelArgs.assetId then
 		local instance = loadAsset(insertModelArgs.assetId)
 		if not instance then
 			error("Failed to load asset from ID: " .. tostring(insertModelArgs.assetId))
 		end
-		
+
 		local name = instance.Name
 		local i = 1
 		while workspace:FindFirstChild(name) do
@@ -143,7 +143,7 @@ local function handleInsertModel(args: Types.ToolArgs): string?
 		end
 		instance.Name = name
 		instance.Parent = workspace
-		
+
 		if instance:IsA("Model") then
 			instance:PivotTo(CFrame.new(getInsertPosition()))
 		end

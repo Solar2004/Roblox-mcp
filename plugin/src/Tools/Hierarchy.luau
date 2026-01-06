@@ -102,7 +102,10 @@ local function getStructure(instance, depth, currentPath, maxDepth, showScriptsO
 
 		for className, classChildren in pairs(classGroups) do
 			for i = 1, math.min(3, #classChildren) do
-				table.insert(node.children, getStructure(classChildren[i], depth + 1, currentPath, maxDepth, showScriptsOnly))
+				table.insert(
+					node.children,
+					getStructure(classChildren[i], depth + 1, currentPath, maxDepth, showScriptsOnly)
+				)
 			end
 			if #classChildren > 3 then
 				table.insert(node.children, {
@@ -136,7 +139,6 @@ return function(msg)
 			tree = buildFileTree(startInstance, 0),
 			timestamp = tick(),
 		})
-
 	elseif msg.GetServices then
 		local args = msg.GetServices
 		local serviceName = args.serviceName
@@ -158,9 +160,17 @@ return function(msg)
 		else
 			local services = {}
 			local commonServices = {
-				"Workspace", "Players", "StarterGui", "StarterPack", "StarterPlayer",
-				"ReplicatedStorage", "ServerStorage", "ServerScriptService",
-				"HttpService", "TeleportService", "DataStoreService",
+				"Workspace",
+				"Players",
+				"StarterGui",
+				"StarterPack",
+				"StarterPlayer",
+				"ReplicatedStorage",
+				"ServerStorage",
+				"ServerScriptService",
+				"HttpService",
+				"TeleportService",
+				"DataStoreService",
 			}
 
 			for _, sName in ipairs(commonServices) do
@@ -177,7 +187,6 @@ return function(msg)
 
 			return HttpService:JSONEncode({ services = services })
 		end
-
 	elseif msg.GetProjectStructure then
 		local args = msg.GetProjectStructure
 		local startPath = args.path or ""
@@ -188,9 +197,14 @@ return function(msg)
 		if startPath == "" or startPath == "game" then
 			local services = {}
 			local mainServices = {
-				"Workspace", "ServerScriptService", "ServerStorage",
-				"ReplicatedStorage", "StarterGui", "StarterPack",
-				"StarterPlayer", "Players",
+				"Workspace",
+				"ServerScriptService",
+				"ServerStorage",
+				"ReplicatedStorage",
+				"StarterGui",
+				"StarterPack",
+				"StarterPlayer",
+				"Players",
 			}
 
 			for _, sName in ipairs(mainServices) do
@@ -227,7 +241,6 @@ return function(msg)
 		result.timestamp = tick()
 
 		return HttpService:JSONEncode(result)
-
 	elseif msg.GetInstanceChildren then
 		local args = msg.GetInstanceChildren
 		local instancePath = args.instancePath

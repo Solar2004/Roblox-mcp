@@ -51,11 +51,11 @@ local function collapseObjectsIntoContainer(objects: { Instance }): Instance?
 end
 
 -- Smart script placement: moves scripts to appropriate locations
-local function organizeScripts(instance: Instance, results: {any})
+local function organizeScripts(instance: Instance, results: { any })
 	local ServerScriptService = game:GetService("ServerScriptService")
 	local StarterPlayer = game:GetService("StarterPlayer")
 	local ReplicatedStorage = game:GetService("ReplicatedStorage")
-	
+
 	-- Find all scripts recursively
 	local function findScripts(parent: Instance)
 		for _, child in parent:GetChildren() do
@@ -71,7 +71,7 @@ local function organizeScripts(instance: Instance, results: {any})
 				table.insert(results.scripts_moved, {
 					name = child.Name,
 					type = "Script",
-					location = "ServerScriptService/" .. instance.Name
+					location = "ServerScriptService/" .. instance.Name,
 				})
 			elseif child:IsA("LocalScript") then
 				-- Move LocalScripts to StarterPlayerScripts
@@ -85,7 +85,7 @@ local function organizeScripts(instance: Instance, results: {any})
 				table.insert(results.scripts_moved, {
 					name = child.Name,
 					type = "LocalScript",
-					location = "StarterPlayerScripts/" .. instance.Name
+					location = "StarterPlayerScripts/" .. instance.Name,
 				})
 			elseif child:IsA("ModuleScript") then
 				-- Move ModuleScripts to ReplicatedStorage
@@ -99,7 +99,7 @@ local function organizeScripts(instance: Instance, results: {any})
 				table.insert(results.scripts_moved, {
 					name = child.Name,
 					type = "ModuleScript",
-					location = "ReplicatedStorage/" .. instance.Name
+					location = "ReplicatedStorage/" .. instance.Name,
 				})
 			else
 				-- Recursively check children
@@ -107,19 +107,19 @@ local function organizeScripts(instance: Instance, results: {any})
 			end
 		end
 	end
-	
+
 	findScripts(instance)
 end
 
 local function loadAsset(assetId: number): Instance?
 	local success, objects = pcall(function()
-		return game:GetObjects("rbxassetid://"..assetId)
+		return game:GetObjects("rbxassetid://" .. assetId)
 	end)
-	
+
 	if not success or not objects then
 		return nil
 	end
-	
+
 	return collapseObjectsIntoContainer(objects)
 end
 
@@ -130,16 +130,16 @@ local function handleInsertAssets(args: Types.ToolArgs): string?
 
 	local insertAssetsArgs = args["InsertAssets"]
 	local assetIds = insertAssetsArgs.asset_ids
-	
+
 	if not assetIds or #assetIds == 0 then
 		error("InsertAssets requires at least one asset_id")
 	end
-	
+
 	local inserted = {}
 	local failed = {}
 	local position = getInsertPosition()
 	local offset = 0
-	
+
 	for _, assetId in assetIds do
 		local instance = loadAsset(assetId)
 		if instance then
@@ -150,32 +150,32 @@ local function handleInsertAssets(args: Types.ToolArgs): string?
 				i += 1
 			end
 			instance.Name = name
-			
+
 			-- Track script movements
-			local scriptResults = {scripts_moved = {}}
-			
+			local scriptResults = { scripts_moved = {} }
+
 			-- Organize scripts before parenting to workspace
 			organizeScripts(instance, scriptResults)
-			
+
 			-- Parent to workspace
 			instance.Parent = workspace
-			
+
 			if instance:IsA("Model") then
 				-- Offset each model so they don't overlap
 				instance:PivotTo(CFrame.new(position + Vector3.new(offset, 0, 0)))
 				offset += 5
 			end
-			
+
 			table.insert(inserted, {
 				id = assetId,
 				name = name,
-				scripts = scriptResults.scripts_moved
+				scripts = scriptResults.scripts_moved,
 			})
 		else
 			table.insert(failed, assetId)
 		end
 	end
-	
+
 	local result = "Inserted " .. #inserted .. " assets into Workspace"
 	if #inserted > 0 then
 		result = result .. ":\n"
@@ -184,19 +184,26 @@ local function handleInsertAssets(args: Types.ToolArgs): string?
 			if #info.scripts > 0 then
 				result = result .. "    📜 Scripts organized:\n"
 				for _, script in info.scripts do
-					result = result .. "      • " .. script.name .. " (" .. script.type .. ") → " .. script.location .. "\n"
+					result = result
+						.. "      • "
+						.. script.name
+						.. " ("
+						.. script.type
+						.. ") → "
+						.. script.location
+						.. "\n"
 				end
 			end
 		end
 	end
-	
+
 	if #failed > 0 then
 		result = result .. "\nFailed to insert " .. #failed .. " assets:\n"
 		for _, id in failed do
 			result = result .. "  - Asset ID: " .. id .. "\n"
 		end
 	end
-	
+
 	return result
 end
 

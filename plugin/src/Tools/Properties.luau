@@ -1,6 +1,6 @@
 local Util = require(script.Parent.Parent.Util)
-local HttpService = game:GetService("HttpService")
 local ChangeHistoryService = game:GetService("ChangeHistoryService")
+local HttpService = game:GetService("HttpService")
 
 return function(msg)
 	if msg.GetInstanceProperties then
@@ -35,12 +35,35 @@ return function(msg)
 			end
 
 			local commonProps = {
-				"Size", "Position", "Rotation", "CFrame", "Anchored", "CanCollide",
-				"Transparency", "BrickColor", "Material", "Color", "Text", "TextColor3",
-				"BackgroundColor3", "Image", "ImageColor3", "Visible", "Active", "ZIndex",
-				"BorderSizePixel", "BackgroundTransparency", "ImageTransparency",
-				"TextTransparency", "Value", "Enabled", "Brightness", "Range",
-				"Shadows", "Face", "SurfaceType",
+				"Size",
+				"Position",
+				"Rotation",
+				"CFrame",
+				"Anchored",
+				"CanCollide",
+				"Transparency",
+				"BrickColor",
+				"Material",
+				"Color",
+				"Text",
+				"TextColor3",
+				"BackgroundColor3",
+				"Image",
+				"ImageColor3",
+				"Visible",
+				"Active",
+				"ZIndex",
+				"BorderSizePixel",
+				"BackgroundTransparency",
+				"ImageTransparency",
+				"TextTransparency",
+				"Value",
+				"Enabled",
+				"Brightness",
+				"Range",
+				"Shadows",
+				"Face",
+				"SurfaceType",
 			}
 
 			for _, prop in ipairs(commonProps) do
@@ -82,7 +105,6 @@ return function(msg)
 		else
 			return HttpService:JSONEncode({ error = "Failed to get properties: " .. tostring(result) })
 		end
-		
 	elseif msg.SetProperty then
 		local args = msg.SetProperty
 		local instancePath = args.instancePath
@@ -140,18 +162,19 @@ return function(msg)
 				propertyName = propertyName,
 			})
 		end
-		
 	elseif msg.MassSetProperty then
 		local args = msg.MassSetProperty
 		local paths = args.paths
 		local propertyName = args.propertyName
 		local propertyValue = args.propertyValue
-		
+
 		local results = {}
 		for _, path in ipairs(paths) do
 			local inst = Util.getInstanceByPath(path)
 			if inst then
-				pcall(function() inst[propertyName] = propertyValue end)
+				pcall(function()
+					inst[propertyName] = propertyValue
+				end)
 				table.insert(results, { path = path, success = true })
 			else
 				table.insert(results, { path = path, success = false, error = "Not found" })
@@ -159,17 +182,18 @@ return function(msg)
 		end
 		ChangeHistoryService:SetWaypoint("Mass Set Property")
 		return HttpService:JSONEncode({ results = results })
-
 	elseif msg.MassGetProperty then
 		local args = msg.MassGetProperty
 		local paths = args.paths
 		local propertyName = args.propertyName
-		
+
 		local results = {}
 		for _, path in ipairs(paths) do
 			local inst = Util.getInstanceByPath(path)
 			if inst then
-				local s, val = pcall(function() return tostring(inst[propertyName]) end)
+				local s, val = pcall(function()
+					return tostring(inst[propertyName])
+				end)
 				if s then
 					table.insert(results, { path = path, value = val })
 				else
@@ -179,6 +203,6 @@ return function(msg)
 		end
 		return HttpService:JSONEncode({ results = results })
 	end
-	
+
 	return nil
 end

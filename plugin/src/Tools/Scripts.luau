@@ -1,6 +1,6 @@
 local Util = require(script.Parent.Parent.Util)
-local HttpService = game:GetService("HttpService")
 local ChangeHistoryService = game:GetService("ChangeHistoryService")
+local HttpService = game:GetService("HttpService")
 
 return function(msg)
 	if msg.CreateScript then
@@ -37,12 +37,11 @@ return function(msg)
 			return HttpService:JSONEncode({
 				success = true,
 				instancePath = Util.getInstancePath(newScript),
-				message = "Created " .. scriptType
+				message = "Created " .. scriptType,
 			})
 		else
 			return HttpService:JSONEncode({ error = "Failed to create script: " .. tostring(newScript) })
 		end
-
 	elseif msg.UpdateScript then
 		local args = msg.UpdateScript
 		local instancePath = args.instancePath
@@ -71,7 +70,6 @@ return function(msg)
 		else
 			return HttpService:JSONEncode({ error = "Failed to update script: " .. tostring(err) })
 		end
-
 	elseif msg.ReadScript then
 		local args = msg.ReadScript
 		local instancePath = args.instancePath
@@ -92,7 +90,7 @@ return function(msg)
 		return HttpService:JSONEncode({
 			success = true,
 			source = instance.Source,
-			instancePath = instancePath
+			instancePath = instancePath,
 		})
 	end
 

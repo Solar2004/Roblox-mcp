@@ -1,6 +1,6 @@
 <div align="center">
 
-![Roblox Studio MCP Server Banner](./assets/banner.png)
+![Roblox Studio MCP Server Banner](docs/images/banner.png)
 
 # 🎮 Roblox Studio MCP Server
 

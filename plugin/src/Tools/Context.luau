@@ -1,4 +1,4 @@
-local Util = require(script.Parent.Parent.Util)
+-- local Util = require(script.Parent.Parent.Util)
 local HttpService = game:GetService("HttpService")
 
 return function(msg)
@@ -14,11 +14,12 @@ return function(msg)
 			},
 		}
 		return HttpService:JSONEncode(info)
-
 	elseif msg.GetClassInfo then
 		local args = msg.GetClassInfo
 		local className = args.className
-		if not className then return HttpService:JSONEncode({ error = "Class name required" }) end
+		if not className then
+			return HttpService:JSONEncode({ error = "Class name required" })
+		end
 
 		local success, tempInstance = pcall(function()
 			return Instance.new(className)
@@ -36,26 +37,66 @@ return function(msg)
 		}
 
 		local commonProps = {
-			"Name", "ClassName", "Parent", "Size", "Position", "Rotation", "CFrame",
-			"Anchored", "CanCollide", "Transparency", "BrickColor", "Material", "Color",
-			"Text", "TextColor3", "BackgroundColor3", "Image", "ImageColor3", "Visible",
-			"Active", "ZIndex", "BorderSizePixel", "BackgroundTransparency", "ImageTransparency",
-			"TextTransparency", "Value", "Enabled", "Brightness", "Range", "Shadows",
+			"Name",
+			"ClassName",
+			"Parent",
+			"Size",
+			"Position",
+			"Rotation",
+			"CFrame",
+			"Anchored",
+			"CanCollide",
+			"Transparency",
+			"BrickColor",
+			"Material",
+			"Color",
+			"Text",
+			"TextColor3",
+			"BackgroundColor3",
+			"Image",
+			"ImageColor3",
+			"Visible",
+			"Active",
+			"ZIndex",
+			"BorderSizePixel",
+			"BackgroundTransparency",
+			"ImageTransparency",
+			"TextTransparency",
+			"Value",
+			"Enabled",
+			"Brightness",
+			"Range",
+			"Shadows",
 		}
 
 		for _, prop in ipairs(commonProps) do
-			local propSuccess, _ = pcall(function() return tempInstance[prop] end)
-			if propSuccess then table.insert(classInfo.properties, prop) end
+			local propSuccess, _ = pcall(function()
+				return tempInstance[prop]
+			end)
+			if propSuccess then
+				table.insert(classInfo.properties, prop)
+			end
 		end
 
 		local commonMethods = {
-			"Destroy", "Clone", "FindFirstChild", "FindFirstChildOfClass",
-			"GetChildren", "IsA", "IsAncestorOf", "IsDescendantOf", "WaitForChild",
+			"Destroy",
+			"Clone",
+			"FindFirstChild",
+			"FindFirstChildOfClass",
+			"GetChildren",
+			"IsA",
+			"IsAncestorOf",
+			"IsDescendantOf",
+			"WaitForChild",
 		}
 
 		for _, method in ipairs(commonMethods) do
-			local mSuccess, _ = pcall(function() return tempInstance[method] end)
-			if mSuccess then table.insert(classInfo.methods, method) end
+			local mSuccess, _ = pcall(function()
+				return tempInstance[method]
+			end)
+			if mSuccess then
+				table.insert(classInfo.methods, method)
+			end
 		end
 
 		tempInstance:Destroy()

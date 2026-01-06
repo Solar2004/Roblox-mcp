@@ -46,7 +46,6 @@ return function(msg)
 			searchType = searchType,
 			count = #results,
 		})
-
 	elseif msg.SearchObjects then
 		local args = msg.SearchObjects
 		local query = args.query
@@ -96,7 +95,6 @@ return function(msg)
 			searchType = searchType,
 			count = #results,
 		})
-
 	elseif msg.SearchByProperty then
 		local args = msg.SearchByProperty
 		local propertyName = args.propertyName

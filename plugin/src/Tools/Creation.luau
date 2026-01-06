@@ -1,6 +1,6 @@
 local Util = require(script.Parent.Parent.Util)
-local HttpService = game:GetService("HttpService")
 local ChangeHistoryService = game:GetService("ChangeHistoryService")
+local HttpService = game:GetService("HttpService")
 
 return function(msg)
 	if msg.CreateObject then
@@ -21,7 +21,9 @@ return function(msg)
 
 		local success, newInstance = pcall(function()
 			local instance = Instance.new(className)
-			if name then instance.Name = name end
+			if name then
+				instance.Name = name
+			end
 
 			for propertyName, propertyValue in pairs(properties) do
 				pcall(function()
@@ -46,13 +48,16 @@ return function(msg)
 		else
 			return HttpService:JSONEncode({ error = "Failed to create object: " .. tostring(newInstance) })
 		end
-
 	elseif msg.DeleteObject then
 		local args = msg.DeleteObject
 		local instancePath = args.instancePath
-		if not instancePath then return HttpService:JSONEncode({ error = "Instance path is required" }) end
+		if not instancePath then
+			return HttpService:JSONEncode({ error = "Instance path is required" })
+		end
 		local instance = Util.getInstanceByPath(instancePath)
-		if not instance then return HttpService:JSONEncode({ error = "Instance not found" }) end
+		if not instance then
+			return HttpService:JSONEncode({ error = "Instance not found" })
+		end
 
 		local success, result = pcall(function()
 			instance:Destroy()
@@ -65,11 +70,12 @@ return function(msg)
 		else
 			return HttpService:JSONEncode({ error = "Failed to delete: " .. tostring(result) })
 		end
-
 	elseif msg.MassCreateObjects then
 		local args = msg.MassCreateObjects
 		local objects = args.objects
-		if not objects then return HttpService:JSONEncode({ error = "Objects array required" }) end
+		if not objects then
+			return HttpService:JSONEncode({ error = "Objects array required" })
+		end
 
 		local results = {}
 		local successCount = 0
@@ -79,7 +85,9 @@ return function(msg)
 			if pInst then
 				local s, newI = pcall(function()
 					local i = Instance.new(obj.className)
-					if obj.name then i.Name = obj.name end
+					if obj.name then
+						i.Name = obj.name
+					end
 					i.Parent = pInst
 					return i
 				end)
@@ -94,13 +102,16 @@ return function(msg)
 			end
 		end
 
-		if successCount > 0 then ChangeHistoryService:SetWaypoint("Mass object creation") end
+		if successCount > 0 then
+			ChangeHistoryService:SetWaypoint("Mass object creation")
+		end
 		return HttpService:JSONEncode({ results = results, count = successCount })
-
 	elseif msg.MassCreateObjectsWithProperties then
 		local args = msg.MassCreateObjectsWithProperties
 		local objects = args.objects
-		if not objects then return HttpService:JSONEncode({ error = "Objects array required" }) end
+		if not objects then
+			return HttpService:JSONEncode({ error = "Objects array required" })
+		end
 
 		local results = {}
 		local successCount = 0
@@ -110,13 +121,19 @@ return function(msg)
 			if pInst then
 				local s, newI = pcall(function()
 					local i = Instance.new(obj.className)
-					if obj.name then i.Name = obj.name end
+					if obj.name then
+						i.Name = obj.name
+					end
 					i.Parent = pInst
 					if obj.properties then
 						for k, v in pairs(obj.properties) do
 							pcall(function()
 								local conv = Util.convertPropertyValue(i, k, v)
-								if conv ~= nil then i[k] = conv else i[k] = v end
+								if conv ~= nil then
+									i[k] = conv
+								else
+									i[k] = v
+								end
 							end)
 						end
 					end
@@ -133,9 +150,10 @@ return function(msg)
 			end
 		end
 
-		if successCount > 0 then ChangeHistoryService:SetWaypoint("Mass create objects with props") end
+		if successCount > 0 then
+			ChangeHistoryService:SetWaypoint("Mass create objects with props")
+		end
 		return HttpService:JSONEncode({ results = results, count = successCount })
-	
 	elseif msg.SmartDuplicate then
 		local args = msg.SmartDuplicate
 		local instancePath = args.instancePath
@@ -143,7 +161,9 @@ return function(msg)
 		local options = args.options or {}
 
 		local instance = Util.getInstanceByPath(instancePath)
-		if not instance then return HttpService:JSONEncode({ error = "Instance not found" }) end
+		if not instance then
+			return HttpService:JSONEncode({ error = "Instance not found" })
+		end
 
 		local results = {}
 		local successCount = 0
@@ -167,12 +187,13 @@ return function(msg)
 			end
 		end
 
-		if successCount > 0 then ChangeHistoryService:SetWaypoint("Smart Duplicate") end
+		if successCount > 0 then
+			ChangeHistoryService:SetWaypoint("Smart Duplicate")
+		end
 		return HttpService:JSONEncode({ results = results, count = successCount })
-	
 	elseif msg.MassDuplicate then
-		local args = msg.MassDuplicate
-		local duplications = args.duplications or {}
+		-- local args = msg.MassDuplicate
+		-- local duplications = args.duplications or {}
 		local results = {}
 		-- Simplified implementation
 		return HttpService:JSONEncode({ results = results, count = 0 })
